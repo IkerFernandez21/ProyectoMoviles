@@ -2,8 +2,10 @@ package com.example.proyectomoviles;
 
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -34,9 +36,10 @@ import java.nio.charset.StandardCharsets;
 
 public class Login extends AppCompatActivity {
     private SQLiteDatabase bd;
-
+    private SharedPreferences preferences;
     private DatabaseHelper databaseHelper;
     private Usuarios user;
+    private Dialog alerta;
     private String nombre,contraseña,nom,pas;
     EditText username, password, reg_username, reg_password,
             reg_firstName, reg_lastName, reg_email, reg_confirmemail;
@@ -56,13 +59,18 @@ public class Login extends AppCompatActivity {
         txtInLayoutUsername = findViewById(R.id.txtInLayoutUsername);
         txtInLayoutPassword = findViewById(R.id.txtInLayoutPassword);
         rememberMe = findViewById(R.id.rememberMe);
-
+        preferences = getSharedPreferences("PrefrenciasCorreo",Context.MODE_PRIVATE);
 
         databaseHelper = new DatabaseHelper(this);
+        String CorreoAlmacenado = preferences.getString("email","");
+        if (!CorreoAlmacenado.equals("")){
+            username.setText(CorreoAlmacenado);
+            rememberMe.setChecked(true);
+        }
         ClickLogin();
 
 
-        //SignUp's Button for showing registration page
+
         signUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -72,12 +80,12 @@ public class Login extends AppCompatActivity {
 
 
     }
-   
 
 
 
 
-    //This is method for doing operation of check login
+
+
     private void ClickLogin() {
 
         login.setOnClickListener(new View.OnClickListener() {
@@ -86,31 +94,27 @@ public class Login extends AppCompatActivity {
 
                 if (username.getText().toString().trim().isEmpty()) {
 
-                    Snackbar snackbar = Snackbar.make(view, "Please fill out these fields",
+                    Snackbar snackbar = Snackbar.make(view, "Rellena los campos",
                             Snackbar.LENGTH_LONG);
                     View snackbarView = snackbar.getView();
                     snackbarView.setBackgroundColor(getResources().getColor(R.color.red));
                     snackbar.show();
-                    txtInLayoutUsername.setError("Username should not be empty");
+                    txtInLayoutUsername.setError("Usuario no escrito");
                 } else {
                     //Here you can write the codes for checking username
                 }
                 if (password.getText().toString().trim().isEmpty()) {
-                    Snackbar snackbar = Snackbar.make(view, "Please fill out these fields",
+                    Snackbar snackbar = Snackbar.make(view, "Rellena los campos",
                             Snackbar.LENGTH_LONG);
                     View snackbarView = snackbar.getView();
                     snackbarView.setBackgroundColor(getResources().getColor(R.color.red));
                     snackbar.show();
-                    txtInLayoutPassword.setError("Password should not be empty");
+                    txtInLayoutPassword.setError("Contraseña no escrita");
                 } else {
                     //Here you can write the codes for checking password
                 }
 
-                if (rememberMe.isChecked()) {
-                    //Here you can write the codes if box is checked
-                } else {
-                    //Here you can write the codes if box is not checked
-                }
+
 
                 verifyFromSQLite(username.getText().toString(),password.getText().toString());
 
@@ -124,13 +128,30 @@ public class Login extends AppCompatActivity {
         if (databaseHelper.checkUser(email,pass)) {
             Intent accountsIntent = new Intent(this, MainActivity.class);
             accountsIntent.putExtra("email", email);
-
+            if(rememberMe.isChecked()){
+                guardarCorreo();
+            }else if(!rememberMe.isChecked()){
+                borrarCorreo();
+            }
             startActivity(accountsIntent);
         } else {
             // Snack Bar to show success message that record is wrong
-           Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+           Toast.makeText(getApplicationContext(), "Error en el usuario o contraseña , vuelva a intentarlo", Toast.LENGTH_LONG).show();
         }
     }
+
+    private void borrarCorreo() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("email","");
+        editor.commit();
+    }
+
+    private void guardarCorreo() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("email",username.getText().toString());
+        editor.commit();
+    }
+
     //The method for opening the registration page and another processes or checks for registering
     private void ClickSignUp() {
 
@@ -156,50 +177,50 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
                 if (reg_username.getText().toString().trim().isEmpty()) {
 
-                    reg_username.setError("Please fill out this field");
+                    reg_username.setError("Rellena este campo");
                 } else {
                     nombre = reg_username.getText().toString();
                 }
                 if (reg_password.getText().toString().trim().isEmpty()) {
                     txtInLayoutRegPassword.setPasswordVisibilityToggleEnabled(false);
-                    reg_password.setError("Please fill out this field");
+                    reg_password.setError("Rellena este campo");
                 } else {
                     txtInLayoutRegPassword.setPasswordVisibilityToggleEnabled(true);
                     contraseña = reg_password.getText().toString();
                 }
                 if (reg_firstName.getText().toString().trim().isEmpty()) {
 
-                    reg_firstName.setError("Please fill out this field");
+                    reg_firstName.setError("Rellena este campo");
                 } else {
-                    //Here you can write the codes for checking firstname
+
 
                 }
                 if (reg_lastName.getText().toString().trim().isEmpty()) {
 
-                    reg_lastName.setError("Please fill out this field");
+                    reg_lastName.setError("Rellena este campo");
                 } else {
-                    //Here you can write the codes for checking lastname
+
                 }
                 if (reg_email.getText().toString().trim().isEmpty()) {
 
-                    reg_email.setError("Please fill out this field");
+                    reg_email.setError("Rellena este campo");
                 } else {
-                    //Here you can write the codes for checking email
+
                 }
                 if (reg_confirmemail.getText().toString().trim().isEmpty()) {
 
-                    reg_confirmemail.setError("Please fill out this field");
+                    reg_confirmemail.setError("Rellena este campo");
                 } else {
-                    //Here you can write the codes for checking confirmemail
+
                 }
 
                 postDataToSQLite(reg_username.getText().toString(),reg_password.getText().toString(),reg_email.getText().toString());
 
             }
         });
+        alerta =dialog.show();
 
 
-        dialog.show();
 
     }
     private void postDataToSQLite(String nom,String pass,String email) {
@@ -209,12 +230,12 @@ public class Login extends AppCompatActivity {
             user.setEmail(email);
             user.setPassword(pass);
             databaseHelper.addUser(user);
-            // Snack Bar to show success message that record saved successfully
-           Toast.makeText(getApplicationContext(),"Conseguido, añadidido correcto",Toast.LENGTH_LONG);
+
+           Toast.makeText(getApplicationContext(),"Conseguido, añadidido correcto",Toast.LENGTH_LONG).show();
 
         } else {
-            // Snack Bar to show error message that record already exists
-            Toast.makeText(getApplicationContext(),"Error al añadir",Toast.LENGTH_LONG);
+
+            Toast.makeText(getApplicationContext(),"Error al añadir",Toast.LENGTH_LONG).show();
         }
     }
 

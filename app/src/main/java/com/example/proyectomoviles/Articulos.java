@@ -3,9 +3,9 @@ package com.example.proyectomoviles;
 public class Articulos {
     private int imagen;
     private String nombre;
-    private int precio;
+    private double precio;
 
-    public Articulos(int imagen,String nombre,int precio) {
+    public Articulos(int imagen,String nombre,double precio) {
         this.imagen = imagen;
         this.nombre = nombre;
         this.precio = precio;
@@ -23,7 +23,7 @@ public class Articulos {
 
 
 
-    public int getPrecio() {
+    public double getPrecio() {
         return precio;
     }
 
