@@ -219,13 +219,14 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(Boolean result) {
             if (result) {
                 pg.dismiss();
-                Toast.makeText(MainActivity.this, "Tarea finalizada!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Datos Calculados!", Toast.LENGTH_SHORT).show();
             }
         }
 
         @Override
         protected void onCancelled() {
-            Toast.makeText(MainActivity.this, "Tarea cancelada!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Error, busqueda cancelada!", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 

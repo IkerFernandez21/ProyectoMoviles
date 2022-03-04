@@ -215,6 +215,8 @@ public class Login extends AppCompatActivity {
                 }
 
                 postDataToSQLite(reg_username.getText().toString(),reg_password.getText().toString(),reg_email.getText().toString());
+                Intent intent = new Intent(Login.this,Login.class);
+                startActivity(intent);
 
             }
         });
@@ -235,7 +237,7 @@ public class Login extends AppCompatActivity {
 
         } else {
 
-            Toast.makeText(getApplicationContext(),"Error al añadir",Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(),"Error al añadir,email ya existente",Toast.LENGTH_LONG).show();
         }
     }
 
