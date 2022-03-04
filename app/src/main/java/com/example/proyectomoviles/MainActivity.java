@@ -176,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
         pg.setMax(100);
         tarea = new TareaAsinc();
         tarea.execute();
+        
 
     }
     private class TareaAsinc extends AsyncTask<Void, Integer, Boolean> {
